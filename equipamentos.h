@@ -56,4 +56,9 @@ void listarEquipamentos(Tipo* listaTipos);
 // Prototipo externo chamado por exibirListaPorTipo (lista.c)
 void exibirEquipamento(Equipamento* equip);
 
+// Autor: Paulo Roberto Schiochet 
+// Essas funçoes são para contar reservas;
+int contarReservasDoTipo(Tipo* listaTipos, const char* nomeTipo);
+int contarReservasNaData(Tipo* listaTipos, const char* data);
+
 #endif
