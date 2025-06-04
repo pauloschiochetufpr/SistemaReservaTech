@@ -374,3 +374,141 @@ void listarEquipamentos(Tipo* listaTipos) {
     }
     printf("\n");
 }
+
+/* Implementações para reserva
+   Autor: Paulo Roberto Schiochet
+ * praticamente todas funções são ou para consultas ou reservas utilizando também utilizando as funções, ponteiros e afins já implementados pelo o Thiago e/ou Henrique 
+   Estão com parte da suas explicações do que estão fazendo na lista.h */
+
+// Conta o total de reservas para um tipo específico de equipamento
+int listarReservasPorTipo(Tipo* listaTipos, const char* nomeTipo) {
+    if (!listaTipos || !nomeTipo) return 0;  // verifica se é válido
+
+    Tipo* tipoEncontrado = buscarTipo(&listaTipos, nomeTipo);
+    if (!tipoEncontrado) return 0;  // retorna 0 se nao encontrar
+
+    int totalReservas = 0;
+
+    // percorre a lista
+    No* noAtual = tipoEncontrado->listaEquipamentos;
+    while (noAtual != NULL) {
+        Equipamento* equip = noAtual->equipamento;
+
+        // Percorre a lista de reservas do equipamento
+        Reserva* reservaAtual = equip->reservas;
+        while (reservaAtual != NULL) {
+            totalReservas++;  // conta a reserva
+            reservaAtual = reservaAtual->prox;  // Vai pra reserva
+        }
+
+        noAtual = noAtual->prox;  // vai pro equipamento
+    }
+
+    return totalReservas; // total
+}
+
+
+// Conta todas as reservas de todos os tipos de equipamentos para uma data específica
+int consultarReservasPorData(Tipo* listaTipos, const char* data) {
+    if (!listaTipos || !data) return 0; 
+
+    int totalReservas = 0;
+    Tipo* tipoAtual = listaTipos;  // vê a lista de tipos
+
+    while (tipoAtual != NULL) {
+        // vê equipamentos do tipo atual, procurando
+        No* noAtual = tipoAtual->listaEquipamentos;
+        while (noAtual != NULL) {
+            Reserva* reservaAtual = noAtual->equipamento->reservas;
+
+            // Percorre as reservas de cada equipamento
+            while (reservaAtual != NULL) {
+                // vê se a data bate com a informada
+                if (strcmp(reservaAtual->data, data) == 0) {
+                    totalReservas++;  
+                }
+                reservaAtual = reservaAtual->prox;
+            }
+
+            noAtual = noAtual->prox; 
+        }
+
+        tipoAtual = tipoAtual->prox;  // vai pro tipo
+    }
+
+    return totalReservas;  // total
+}
+
+// Conta o total de equipamentos e reservas associadas a um tipo de equipamento
+int exibirHistoricoPorTipo(Tipo* listaTipos, const char* nomeTipo) {
+    if (!listaTipos || !nomeTipo) return 0;
+
+    // Busca o tipo de equipamento pelo nome
+    Tipo* tipoEncontrado = buscarTipo(&listaTipos, nomeTipo);
+    if (!tipoEncontrado) return 0;
+
+    int totalEquipamentos = 0;
+    int totalReservas = 0;
+
+    No* noAtual = tipoEncontrado->listaEquipamentos;
+    while (noAtual != NULL) {
+        Equipamento* equip = noAtual->equipamento;
+        totalEquipamentos++;  // conta o equipamento
+
+        // Percorre as reservas do equipamento
+        Reserva* reservaAtual = equip->reservas;
+        while (reservaAtual != NULL) {
+            totalReservas++;
+            reservaAtual = reservaAtual->prox; 
+        }
+
+        noAtual = noAtual->prox;
+    }
+
+    return totalReservas; // total
+}
+
+/* função auxiliar para contar reservas de um tipo específico;
+   Retorna o total de reservas encontradas por tipo */
+int contarReservasDoTipo(Tipo* listaTipos, const char* nomeTipo) {
+    Tipo* tipoEncontrado = buscarTipo(&listaTipos, nomeTipo);
+    if (!tipoEncontrado) return 0;
+    //percorre só o tipo, depois a lista de reserva e entao soma
+    int total = 0;
+    No* noAtual = tipoEncontrado->listaEquipamentos;
+    
+    while (noAtual != NULL) {
+        Reserva* reservaAtual = noAtual->equipamento->reservas;
+        while (reservaAtual != NULL) {
+            total++;
+            reservaAtual = reservaAtual->prox;
+        }
+        noAtual = noAtual->prox;
+    }
+    return total;
+}
+
+/* função auxiliar para contar reservas em uma data específica; 
+   É para retornar inteiro representando o total de reservas da data.*/
+int contarReservasNaData(Tipo* listaTipos, const char* data) {
+    int total = 0;
+    Tipo* tipoAtual = listaTipos;
+    //percorre tudo, vendo qual batem com a data informada
+    while (tipoAtual != NULL) {
+        No* noAtual = tipoAtual->listaEquipamentos;
+        
+        while (noAtual != NULL) {
+            Reserva* reservaAtual = noAtual->equipamento->reservas;
+            
+            while (reservaAtual != NULL) {
+                if (strcmp(reservaAtual->data, data) == 0) {
+                    total++;
+                }
+                reservaAtual = reservaAtual->prox;
+            }
+            noAtual = noAtual->prox;
+        }
+        tipoAtual = tipoAtual->prox;
+    }
+    return total;
+}
