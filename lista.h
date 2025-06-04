@@ -1,6 +1,7 @@
 #ifndef LISTA_H
 #define LISTA_H
 
+typedef struct Equipamento Equipamento;
 
 // Estrutura de uma Lista Encadeada Simples que armazena os Equipametos
 typedef struct No {
@@ -42,5 +43,6 @@ void exibirListaPorTipo(Tipo* lista);
 
 // Libera a memória alocada para a lista de tipos e equipamentos
 void liberarListaTipos(Tipo* lista);
+
 
 #endif

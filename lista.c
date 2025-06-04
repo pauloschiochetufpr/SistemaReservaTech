@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "lista.h"
+#include "equipamentos.h"  
 
 //implementações das funçõe
 
@@ -56,22 +57,24 @@ void inserirEquipamento(Tipo* tipo, Equipamento* nomeEquipamento) {
 // Insere um novo tipo na lista se ainda não existir, retornando o ponteiro para o tipo
 //Insere o No tipo no começo da lista, usa a funçao de buscar tipo pra verificar se o tipo a ser inserido ja existe. 
 //Inicializa uma lista vazia para o tipo criado. Atualiza os ponteiros para apontar para o novo tipo criado, que esta no inicio
-Tipo* inserirTipo(Tipo** lista, const char* nomeTipo) {
+void inserirTipo(Tipo** lista, const char* nomeTipo) {
     Tipo* existe = buscarTipo(lista, nomeTipo);
     if (existe != NULL) {
-        return existe; // retorna o existente 
+        // Já existe esse tipo, não faz nada
+        return; 
     }
 
-    Tipo* novoTipo = (Tipo*)malloc(sizeof(Tipo));
-    if (!novoTipo) return NULL;
+    Tipo* novoTipo = (Tipo*) malloc(sizeof(Tipo));
+    if (!novoTipo) {
+        return;
+    }
 
     strncpy(novoTipo->tipo, nomeTipo, sizeof(novoTipo->tipo) - 1);
-    novoTipo->tipo[sizeof(novoTipo->tipo) - 1] = '\\0';
+    novoTipo->tipo[sizeof(novoTipo->tipo) - 1] = '\0';
     novoTipo->listaEquipamentos = NULL;
     novoTipo->prox = *lista;    // insere no início 
     *lista = novoTipo;
 
-    return novoTipo;
 }
 
 
