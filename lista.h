@@ -44,5 +44,18 @@ void exibirListaPorTipo(Tipo* lista);
 // Libera a memória alocada para a lista de tipos e equipamentos
 void liberarListaTipos(Tipo* lista);
 
+// Autor: Paulo Roberto Schiochet
+/* Para conseguir listar todas as reservas de um determinadp tipo de equipamento, por data especifica e mostrar o historico. 
+ * 1- listarReservasportipo: receber a listas de tipos e pede ao usuário o tipo que ele quer, e então exibe todas as reservas do equipamento desse tipo.
+ */
+void listarReservasPorTipo(Tipo* listaTipos);
+
+/* 2- consultarReservasportipo: essencialmente igual a de cima, mas ao invés de requerir o tipo de equipamento, pede a data e mostra as reservas, independente do tipo.
+*/
+void consultarReservasPorData(Tipo* listaTipos);
+
+/* 3- exibirHistoricoportipo: exibe um histórico completo por tipo de equipamento 
+ * entao dali recebe a lista de tipos e pede ao usuário o tipo desejado, mostrando todos os equipamentos do tipo.*/
+void exibirHistoricoPorTipo(Tipo* listaTipos);
 
 #endif
