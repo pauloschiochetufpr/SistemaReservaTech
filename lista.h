@@ -32,7 +32,7 @@ Equipamento* buscarEquipamento(Tipo* lista, int codigo);
 void inserirEquipamento(Tipo* tipo, Equipamento* equipamento);
 
 //Insere um novo tipo. Se ja existe, retorna o existente
-void inserirTipo(Tipo** lista, const char* nome);
+int inserirTipo(Tipo** lista, const char* nome);
 
 
 // Remove um equipamento pelo cod da lista de tipos, liberando a memoria e ajustando a ordem dos ponteiros

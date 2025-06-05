@@ -3,20 +3,18 @@
 #include <string.h>
 #include "lista.h"
 #include "equipamentos.h"  
+#include <ctype.h>  // Para usar tolower
 
-//implementações das funçõe
-
+//implementações das funçõeS
 Tipo* criarLista(){
     return NULL;
 }
-
 
 //Percorre cada No da lista de tipos, comparando com o nome desejado até encontrar. Retorna NULL caso não existe o nome
 Tipo* buscarTipo(Tipo** lista, const char* nomeTipo) {
     Tipo* atual = *lista;
     while (atual != NULL) {
-        //
-        if (strcmp(atual->tipo, nomeTipo) == 0) {
+        if (strcasecmp(atual->tipo, nomeTipo) == 0) {
             return atual;
         }
         atual = atual->prox;
@@ -24,9 +22,7 @@ Tipo* buscarTipo(Tipo** lista, const char* nomeTipo) {
     return NULL;
 }
 
-
-    //Essa aqui eu nao sei se realmente é aq, qlq coisa so mandar la pro outro codigo
-
+//Essa aqui eu nao sei se realmente é aq, qlq coisa so mandar la pro outro codigo
 Equipamento* buscarEquipamento(Tipo* lista, int codigo) {
     Tipo* tipoAtual = lista;
     while (tipoAtual != NULL) {
@@ -42,9 +38,6 @@ Equipamento* buscarEquipamento(Tipo* lista, int codigo) {
     return NULL; // Equipamento não encontrado
 }
 
-
-
-
 // Insere um equipamento na lista ligada a um tipo que ja existe
 void inserirEquipamento(Tipo* tipo, Equipamento* nomeEquipamento) {
     No* novoNo = (No*)malloc(sizeof(No));
@@ -54,31 +47,36 @@ void inserirEquipamento(Tipo* tipo, Equipamento* nomeEquipamento) {
     tipo->listaEquipamentos = novoNo;
 }
 
+//Função para que o Caps Lock não interfira no tipo 
+void toLowerCase(char* str) {
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower((unsigned char)str[i]);
+    }
+}
+
 // Insere um novo tipo na lista se ainda não existir, retornando o ponteiro para o tipo
 //Insere o No tipo no começo da lista, usa a funçao de buscar tipo pra verificar se o tipo a ser inserido ja existe. 
 //Inicializa uma lista vazia para o tipo criado. Atualiza os ponteiros para apontar para o novo tipo criado, que esta no inicio
-void inserirTipo(Tipo** lista, const char* nomeTipo) {
+int inserirTipo(Tipo** lista, const char* nomeTipo) {
     Tipo* existe = buscarTipo(lista, nomeTipo);
     if (existe != NULL) {
-        // Já existe esse tipo, não faz nada
-        return; 
+        return 0;  // Já existe
     }
 
     Tipo* novoTipo = (Tipo*) malloc(sizeof(Tipo));
     if (!novoTipo) {
-        return;
+        return 0;  // Falha de alocação
     }
 
     strncpy(novoTipo->tipo, nomeTipo, sizeof(novoTipo->tipo) - 1);
     novoTipo->tipo[sizeof(novoTipo->tipo) - 1] = '\0';
+    toLowerCase(novoTipo->tipo);
     novoTipo->listaEquipamentos = NULL;
-    novoTipo->prox = *lista;    // insere no início 
+    novoTipo->prox = *lista;
     *lista = novoTipo;
 
+    return 1;  // Inserido com sucesso
 }
-
-
-
 
 // Remove um equipamento pelo código de todas as listas
 void removerEquipamento(Tipo* lista, int codigo) {
@@ -107,6 +105,11 @@ void removerEquipamento(Tipo* lista, int codigo) {
 
 // Exibe todos os tipos e os equipamentos pertencentes a cada tipo
 void exibirListaPorTipo(Tipo* lista) {
+    if (lista == NULL) {
+        printf("Nenhum tipo de equipamento foi cadastrado ainda.\n");
+        return;
+    }
+    
     Tipo* tipoAtual = lista;
     while (tipoAtual != NULL) {
         printf("Tipo: %s\n", tipoAtual->tipo);

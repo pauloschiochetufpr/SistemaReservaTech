@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-    
-
 #include <ctype.h>
 
 /** normalizeData
@@ -140,10 +138,9 @@ int normalizeHora(const char *raw, char *out) {
 
 // Implementação de exibirEquipamento, usada por lista.c
 void exibirEquipamento(Equipamento* equip) {
-    printf("  - Código: %d | Descrição: %s\n", equip->codigo, equip->descricao);
-    // Se quiser listar reservas, poderia fazer aqui (não obrigatório)
+    printf("  - Codigo: %d | Descricao: %s\n", equip->codigo, equip->descricao);
+// Se quiser listar reservas, poderia fazer aqui (não obrigatório)
 }
-
 
 // Autor: Thiago Tanaka
 /* Função para criar um novo equipamento 
@@ -154,7 +151,7 @@ Tipo* cadastrarEquipamento(Tipo* listaTipos){
     // Aloca memória para um novo equipamento
     Equipamento* novo = (Equipamento*) malloc(sizeof(Equipamento));
     if (!novo) {
-        printf("Erro de memória!\n");
+        printf("Erro de memoria!\n");
         return listaTipos;
     }
 
@@ -380,72 +377,105 @@ void listarEquipamentos(Tipo* listaTipos) {
  * praticamente todas funções são ou para consultas ou reservas utilizando também utilizando as funções, ponteiros e afins já implementados pelo o Thiago e/ou Henrique 
    Estão com parte da suas explicações do que estão fazendo na lista.h */
 
-// Conta o total de reservas para um tipo específico de equipamento
-int listarReservasPorTipo(Tipo* listaTipos, const char* nomeTipo) {
-    if (!listaTipos || !nomeTipo) return 0;  // verifica se é válido
+/* Para conseguir listar todas as reservas de um determinado tipo de equipamento, por data específica e mostrar o histórico. 
+ * listarReservasPorTipo: recebe a lista de tipos e pede ao usuário o tipo que ele quer, e então exibe todas as reservas do equipamento desse tipo.
+ */
+void listarReservasPorTipo(Tipo* listaTipos) {  // ← Alterado: retorno de int para void, removido parâmetro
+    if (!listaTipos) {
+        printf("Nenhum tipo cadastrado.\n");
+        return;
+    }
+
+    char nomeTipo[100];  // ← Alterado: agora pede o nome do tipo dentro da função
+    printf("Informe o tipo: ");
+    scanf(" %99[^\n]", nomeTipo);
 
     Tipo* tipoEncontrado = buscarTipo(&listaTipos, nomeTipo);
-    if (!tipoEncontrado) return 0;  // retorna 0 se nao encontrar
+    if (!tipoEncontrado) {
+        printf("Tipo '%s' nao encontrado.\n", nomeTipo);
+        return;
+    }
 
     int totalReservas = 0;
 
-    // percorre a lista
     No* noAtual = tipoEncontrado->listaEquipamentos;
     while (noAtual != NULL) {
         Equipamento* equip = noAtual->equipamento;
-
-        // Percorre a lista de reservas do equipamento
         Reserva* reservaAtual = equip->reservas;
         while (reservaAtual != NULL) {
-            totalReservas++;  // conta a reserva
-            reservaAtual = reservaAtual->prox;  // Vai pra reserva
+            printf("Equipamento: %s | Codigo: %d | Reserva: %s as %s por %s\n",
+                   equip->descricao, equip->codigo,
+                   reservaAtual->data, reservaAtual->hora, reservaAtual->nome);
+            totalReservas++;
+            reservaAtual = reservaAtual->prox;
         }
-
-        noAtual = noAtual->prox;  // vai pro equipamento
+        noAtual = noAtual->prox;
     }
 
-    return totalReservas; // total
+    printf("Total de reservas para tipo '%s': %d\n", nomeTipo, totalReservas);
 }
 
+/* consultarReservasPorData: essencialmente igual à de cima, mas ao invés de requerer o tipo de equipamento, pede a data e mostra as reservas, independente do tipo.
+ */
+void consultarReservasPorData(Tipo* listaTipos) {
+    if (!listaTipos) {
+        printf("Nenhum tipo cadastrado.\n");
+        return;
+    }
 
-// Conta todas as reservas de todos os tipos de equipamentos para uma data específica
-int consultarReservasPorData(Tipo* listaTipos, const char* data) {
-    if (!listaTipos || !data) return 0; 
+    char dataRaw[20];
+    char dataNorm[11];  // DD/MM/AAAA
+
+    printf("Informe a data (DD/MM/AAAA): ");
+    scanf(" %19[^\n]", dataRaw);
+
+    if (!normalizeData(dataRaw, dataNorm)) {
+        printf("Formato de data invalido. Use DD/MM/AAAA (com ou sem separador).\n");
+        return;
+    }
 
     int totalReservas = 0;
-    Tipo* tipoAtual = listaTipos;  // vê a lista de tipos
+    Tipo* tipoAtual = listaTipos;
 
     while (tipoAtual != NULL) {
-        // vê equipamentos do tipo atual, procurando
         No* noAtual = tipoAtual->listaEquipamentos;
         while (noAtual != NULL) {
             Reserva* reservaAtual = noAtual->equipamento->reservas;
-
-            // Percorre as reservas de cada equipamento
             while (reservaAtual != NULL) {
-                // vê se a data bate com a informada
-                if (strcmp(reservaAtual->data, data) == 0) {
-                    totalReservas++;  
+                if (strcmp(reservaAtual->data, dataNorm) == 0) {  // Comparação sempre normalizada!
+                    printf("Tipo: %s | Equipamento: %s | Codigo: %d | Hora: %s | Nome: %s\n",
+                           tipoAtual->tipo, noAtual->equipamento->descricao,
+                           noAtual->equipamento->codigo, reservaAtual->hora, reservaAtual->nome);
+                    totalReservas++;
                 }
                 reservaAtual = reservaAtual->prox;
             }
-
-            noAtual = noAtual->prox; 
+            noAtual = noAtual->prox;
         }
-
-        tipoAtual = tipoAtual->prox;  // vai pro tipo
+        tipoAtual = tipoAtual->prox;
     }
 
-    return totalReservas;  // total
+    printf("Total de reservas na data '%s': %d\n", dataNorm, totalReservas);
 }
 
-// Conta o total de equipamentos e reservas associadas a um tipo de equipamento
-int exibirHistoricoPorTipo(Tipo* listaTipos, const char* nomeTipo) {
-    if (!listaTipos || !nomeTipo) return 0;
+/* exibirHistoricoPorTipo: exibe um histórico completo por tipo de equipamento
+ * então dali recebe a lista de tipos e pede ao usuário o tipo desejado, mostrando todos os equipamentos do tipo.
+ */
+void exibirHistoricoPorTipo(Tipo* listaTipos) {  // ← Alterado: retorno de int para void, removido parâmetro
+    if (!listaTipos) {
+        printf("Nenhum tipo cadastrado.\n");
+        return;
+    }
 
-    // Busca o tipo de equipamento pelo nome
+    char nomeTipo[100];  // ← Alterado: agora pede o nome do tipo dentro da função
+    printf("Informe o tipo: ");
+    scanf(" %99[^\n]", nomeTipo);
+
     Tipo* tipoEncontrado = buscarTipo(&listaTipos, nomeTipo);
-    if (!tipoEncontrado) return 0;
+    if (!tipoEncontrado) {
+        printf("Tipo '%s' nao encontrado.\n", nomeTipo);
+        return;
+    }
 
     int totalEquipamentos = 0;
     int totalReservas = 0;
@@ -453,19 +483,21 @@ int exibirHistoricoPorTipo(Tipo* listaTipos, const char* nomeTipo) {
     No* noAtual = tipoEncontrado->listaEquipamentos;
     while (noAtual != NULL) {
         Equipamento* equip = noAtual->equipamento;
-        totalEquipamentos++;  // conta o equipamento
+        totalEquipamentos++;
+        printf("Equipamento: %s | Codigo: %d\n", equip->descricao, equip->codigo);
 
-        // Percorre as reservas do equipamento
         Reserva* reservaAtual = equip->reservas;
         while (reservaAtual != NULL) {
+            printf("  -> Reserva: %s as %s por %s\n",
+                   reservaAtual->data, reservaAtual->hora, reservaAtual->nome);
             totalReservas++;
-            reservaAtual = reservaAtual->prox; 
+            reservaAtual = reservaAtual->prox;
         }
 
         noAtual = noAtual->prox;
     }
 
-    return totalReservas; // total
+    printf("Total de equipamentos: %d | Total de reservas: %d\n", totalEquipamentos, totalReservas);
 }
 
 /* função auxiliar para contar reservas de um tipo específico;
