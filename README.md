@@ -76,7 +76,10 @@ gcc main.c lista.c equipamentos.c -o sistema
 
 ## 🧑‍💻 Autores
 
-- Thiago Tanaka Peczek
-- Paulo Roberto Schiochet
-- Henrique Meneses dos Santos
 - Felyppe Marcelo da Silva
+- Henrique Meneses dos Santos
+- Paulo Roberto Schiochet
+- Thiago Tanaka Peczek
+
+
+
