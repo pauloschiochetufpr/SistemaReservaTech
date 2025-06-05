@@ -65,7 +65,6 @@ gcc main.c lista.c equipamentos.c -o sistema
 | `main.c`           | Interface com o usuário, menu principal.    |
 | `lista.c/.h`       | Implementação e protótipos da lista encadeada. |
 | `equipamentos.c/.h`| Funções de gerenciamento de equipamentos e reservas. |
-| `Makefile` _(opcional)_ | Automatiza a compilação do projeto. |
 
 ## ✅ Diferenciais
 
