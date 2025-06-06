@@ -58,4 +58,7 @@ void consultarReservasPorData(Tipo* listaTipos);
  * entao dali recebe a lista de tipos e pede ao usuário o tipo desejado, mostrando todos os equipamentos do tipo.*/
 void exibirHistoricoPorTipo(Tipo* listaTipos);
 
+//Função para que o Caps Lock não interfira no tipo
+void toLowerCase(char* str);
+
 #endif

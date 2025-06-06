@@ -139,12 +139,11 @@ int normalizeHora(const char *raw, char *out) {
 // Implementação de exibirEquipamento, usada por lista.c
 void exibirEquipamento(Equipamento* equip) {
     printf("  - Codigo: %d | Descricao: %s\n", equip->codigo, equip->descricao);
-// Se quiser listar reservas, poderia fazer aqui (não obrigatório)
 }
 
 // Autor: Thiago Tanaka
 /* Função para criar um novo equipamento 
-Recebe o ponteiro para o cabeçalho de tipos (TipoEquipamento*),
+Recebe o ponteiro para o cabeçalho de tipos (Tipo*),
 faz o cadastro e insere o novo Equipamento dentro da lista de tipo apropriada.
 */
 Tipo* cadastrarEquipamento(Tipo* listaTipos){
@@ -155,6 +154,7 @@ Tipo* cadastrarEquipamento(Tipo* listaTipos){
         return listaTipos;
     }
 
+    char tipo[20];
     // Pede os dados para o novo equipamento
     printf("=== Cadastrar Equipamento ===\n");
     printf("Codigo: ");
@@ -168,7 +168,10 @@ Tipo* cadastrarEquipamento(Tipo* listaTipos){
     }
 
     printf("Tipo (ex: Notebook, Tablet, Camera, Projetor): ");
-    scanf(" %19[^\n]", novo->tipo);
+    scanf(" %19[^\n]", tipo);
+    toLowerCase(tipo);
+    strncpy(novo->tipo, tipo, sizeof(novo->tipo));
+    novo->tipo[sizeof(novo->tipo) - 1] = '\0'; // Garantir fim de string
     printf("Descricao: ");
     scanf(" %99[^\n]", novo->descricao);
 
@@ -346,7 +349,7 @@ Tipo* cancelarReserva(Tipo* listaTipos){
     return listaTipos;
 }
 
-// Apagar DEBUG ONLY
+// DEBUG ONLY
 void listarEquipamentos(Tipo* listaTipos) {
     if (!listaTipos) {
         printf("Nenhum equipamento cadastrado.\n");
