@@ -4,6 +4,9 @@
 #include "lista.h"
 #include "equipamentos.h"  
 #include <ctype.h>  // Para usar tolower
+#ifdef _WIN32
+    #define strcasecmp stricmp
+#endif
 
 //implementações das funçõeS
 Tipo* criarLista(){
